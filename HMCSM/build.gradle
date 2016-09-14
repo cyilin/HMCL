@@ -43,7 +43,7 @@ if (buildnumber == null)
 if (buildnumber == null)
     buildnumber = "233"
     
-def versionroot = System.getenv("VERSION_ROOT")
+def versionroot = System.getenv("HMCSM_VERSION_ROOT")
 if (versionroot == null)
     versionroot = "0.8.7"
 
