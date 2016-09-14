@@ -305,7 +305,7 @@ public class MainPagePanel extends AnimatedPanel {
         );
 
         add(pnlMore);
-        pnlMore.setBounds(0, 0, 190, 480);
+        pnlMore.setBounds(0, 0, 230, 480);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtPlayerNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPlayerNameFocusGained

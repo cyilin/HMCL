@@ -45,8 +45,8 @@ public final class UpdateChecker implements IUpdateChecker {
             @Override
             protected void work() throws Exception {
                 if (value == null) {
-                    versionString = NetUtils.get("http://huangyuhui.duapp.com/info.php?type=" + type);
-                    value = VersionNumber.check(versionString);
+                    //versionString = NetUtils.get("http://huangyuhui.duapp.com/info.php?type=" + type);
+                    //value = VersionNumber.check(versionString);
                 }
 
                 if (value == null) {
