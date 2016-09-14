@@ -7,21 +7,21 @@ branches:
 before_deploy:
   - git config --global user.email ${GITHUB_EMAIL}
   - git config --global user.name ${GITHUB_NAME}
-  - git tag ${TRAVIS_BUILD_NUMBER}
+  - git tag HMCL-${VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}
   - git push -q ${REPO} --tags
 deploy:
   provider: releases
   api_key:
-    secure: lfFEwKtij/s9Ao/SKL7oVdsWcfASshZuwT27gllMrTx1ZQqLCG2I5mGJOp5ukx7lb3y4Tu316nFasLjy9NI3eLXSx9f0w4q+wMf0K5Yj9iOwu/TIn7JkLyHDMQ20qRwGxZplS2WUb669gIRg+l6jUHeTBW+dlTxr0mMa6WHIl8UDpHwfFrGC3i6dL4y6WlDwGl2rYktvOoA/iqvtglBcHuXaL2sDfhp5MXRcYULTIw+b9zmiQXP665DQN+Su5I3gwB4y5X8RH72GAacZn13fEIo5i8UUoHM7UQxM8y8DKSO3avyFCfpUle9+9sErQVW7b6JV1c+AoLWuAhNJLMlUTKarZE7UMqfjvoQHxX5hp2B2WHLEON/UJiGf25HJWx6VhJitE0/odujqnG/umesqki2jMTs6gPcxbc9iBjzUg+ZmFztdtC+Emnni7lpqVVl+Y5hsJRn3Z6rIiNgwmaE0r2OQgAm1vRYFc7jvOdRfyFG+uCRZF6nS56BzJ7dLc0WW8dTgSft6YFll4ZYL6hiI9qiIaBAK948y5HV+6VBWuO3xf/G2CUFbE1Y9qUCjToh3ahxNDzZvXB+rXqvlvNQOi5l8n594oQ61n45qIHSKlMBn9Bxhw29oWT5mo1aYIaNXbpzKam2w4mK0T3VrgTszu/3282wRbNr+VAwdGMfwW1s=
+    secure: juCHGP7NTiaSQKTZpFV/sqLiOlG88niI27pg+rUYdjdVI5BtO5EepYoIbmRZ7xk3j6sacOYyqyFu4GaL3+LOjqtwqua2CkOm1/rKPj02gWWsyenKCu1gSLmDYz6xwRgDNMcFBcKf6Z7tnNdKc1QTwQhblcKXUk7asoSVMFxevYhKmjpsBSc1rsbhgBX6kMshjKzc+lke83t/M+wPAVn/ud2uLaln3GDv65f7M05hLGct54irPUWd7FG9adbH3o63nKyn4A0JbNY9seMbvwu/yNjfWXVQ5mjb6goZhOIPDTx5snTa75jgRGimJx8IshxVbMPcE8BvfM/9YpP+7lV/rjo5yQSXnFkqAFVKOdSMOm/xcG0RVADW4JbWziNAF2ZFqqSgKNvqkNb3p87RtjZR4X9k9PVtaj5aextTSRrugX/HlvDWDVf8qUjLOtIx/oC4nRCOoQTZk4u0KRP8O99GLA6X86fzhT7K6dRahSCQ18KIFWcvvkeHtj642w8/D9SsGwlUIPqDETC/VCxm0MX8iL5JIUGiNEhCphlwhtphci9XURLW0MCwmqZMDCyVtqo61VsQ4Y41kBYI5CNukGVm587mnWQfYWuzPaTh09pft9PFGZ1iAC+aKPvwlNxY720Hmf4mi6QPl0wKjrnRq50hI58sqRaTh3n0Lyb5A+Wojl0=
   file:
-  - HMCL/build/libs/HMCL-${HMCL_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.jar
-  - HMCL/build/libs/HMCL-${HMCL_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.exe
-  - HMCL/build/libs/HMCL-${HMCL_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}-MacOSApp.zip
+  - HMCL/build/libs/HMCL-${VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.jar
+  - HMCL/build/libs/HMCL-${VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.exe
+  - HMCL/build/libs/HMCL-${VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}-MacOSApp.zip
   - HMCSM/build/libs/HMCSM-${HMCSM_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.jar
   - HMCSM/build/libs/HMCSM-${HMCSM_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}.exe
   - HMCSM/build/libs/HMCSM-${HMCSM_VERSION_ROOT}.${TRAVIS_BUILD_NUMBER}-MacOSApp.zip
   on:
-    repo: huanghongxun/HMCL
+    repo: cyilin/HMCL
     tags: false
   skip_cleanup: true
 install: echo "skip 'gradle assemble' step"
