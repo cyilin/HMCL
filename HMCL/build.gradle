@@ -15,46 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see {http://www.gnu.org/licenses/}.
  */
-buildscript {
-    repositories {
-        mavenCentral();
-        
-        maven {
-            url "https://libraries.minecraft.net"
-        }
-        
-        dependencies {
-            classpath 'net.sf.proguard:proguard-gradle:4.10'
-            classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
-            classpath 'me.tatarka:gradle-retrolambda:3.1.0'
-        }
-    }
-}
+import java.util.jar.JarFile
+import java.util.jar.Pack200
+import java.util.zip.GZIPOutputStream
+import java.security.MessageDigest
 
 plugins {
     id "edu.sc.seis.macAppBundle" version "2.1.6"
+    id "me.tatarka.retrolambda" version "3.5.0"
+    id 'edu.sc.seis.launch4j' version '2.3.0'
 }
 
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-apply plugin: 'launch4j'
-apply plugin: 'me.tatarka.retrolambda'
-
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'org.jackhuang.hellominecraft.launcher.Main'
+    ext.mainClass = 'org.jackhuang.hmcl.Main'
 }
 
 def buildnumber = System.getenv("TRAVIS_BUILD_NUMBER")
 if (buildnumber == null)
-    buildnumber = System.getenv("BUILD_NUMBER")
+buildnumber = System.getenv("BUILD_NUMBER")
 if (buildnumber == null)
-    buildnumber = "233"
+buildnumber = "0"
     
 def versionroot = System.getenv("VERSION_ROOT")
 if (versionroot == null)
-    versionroot = "2.4.1"
+versionroot = "2.7.6"
 
 String mavenGroupId = 'HMCL'
 String mavenVersion = versionroot + '.' + buildnumber
@@ -65,53 +53,15 @@ version = mavenVersion
 
 String mavenArtifactId = name
 
-task generateSources(type: Copy) {
+task generateSources(type: Sync) {
     from 'src/main/java'
-    from 'src/core/java'
     into "$buildDir/generated-src"
     filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
             'HELLO_MINECRAFT_LAUNCHER_VERSION_FOR_GRADLE_REPLACING': mavenVersion
-    ])
+        ])
 }
 compileJava.setSource "$buildDir/generated-src"
 compileJava.dependsOn generateSources
-
-task macAppCompressed(type: Zip, dependsOn: createApp) {
-    archiveName "HMCL-$mavenVersion-MacOSApp.zip"
-    include '**'
-    destinationDir file("$buildDir/libs/")
-    from "$buildDir/macApp"
-}
-
-macAppBundle {
-    mainClassName = mainClass
-    icon = "src/main/icon.icns"
-    javaProperties.put("apple.laf.useScreenMenuBar", "true")
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = [
-                'src/core/java/',
-                'src/main/java/'
-            ]
-        }
-        resources {
-            srcDirs = ['src/main/resources/']
-        }
-    }
-    core {
-        java {
-            compileClasspath += main.compileClasspath
-            runtimeClasspath += main.runtimeClasspath
-            srcDirs 'src/core/java/'
-        }
-        resources {
-            srcDirs 'src/main/resources/'
-        }
-    }
-}
 
 configurations {
     coreCompile.extendsFrom compile
@@ -128,34 +78,48 @@ configure(install.repositories.mavenInstaller) {
 
 dependencies {
     compile project(":HMCLaF")
-    compile project(":HMCUtils")
-    compile group: "org.commonjava.googlecode.markdown4j", name: "markdown4j", version: "2.2-cj-1.0"
+    compile project(":HMCLAPI")
+    compile project(":HMCLCore")
 }
 
 retrolambda {
-    javaVersion = JavaVersion.VERSION_1_6
+    javaVersion = JavaVersion.VERSION_1_7
 }
 
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     
     manifest {
-        attributes 'Created-By'        : 'Copyright(c) 2013-2016 huangyuhui.',
+        attributes 'Created-By'        : 'Copyright(c) 2013-2017 huangyuhui.',
                    'Main-Class'        : mainClass
+    }
+    
+    doLast {
+        new File("build/signed").mkdirs()
+        ant.signjar(signedjar: archivePath, jar: archivePath,
+            keystore: "HMCL.keystore", storepass: "123456",
+            alias: "HMCL")
+        
+        def messageDigest = MessageDigest.getInstance("SHA1")
+        archivePath.eachByte 1024 * 1024, { byte[] buf, int bytesRead ->
+            messageDigest.update(buf, 0, bytesRead);
+        }
+        def sha1Hex = new BigInteger(1, messageDigest.digest()).toString(16).padLeft(40, '0')
+        def fileEx = new File(project.buildDir, "libs/" + archivePath.getName() + ".sha1")
+        if (!fileEx.exists()) fileEx.createNewFile()
+        fileEx.append sha1Hex
     }
 }
 
 launch4j {
-    launch4jCmd = 'D:\\Develop\\Java\\Launch4j\\launch4j.exe'
-    //launch4jCmd = '/home/huangyuhui/softwares/launch4j/launch4j'
     supportUrl = 'http://www.mcbbs.net/thread-142335-1-1.html'
-    jreMinVersion = '1.6.0'
+    jreMinVersion = '1.7.0'
     
     mainClassName = mainClass
     icon = new File(project.buildDir,  '../icon.ico').absolutePath
     version = mavenVersion
     downloadUrl = 'http://java.com/download'
-    copyright = "Copyright(c) 2013-2015 huangyuhui."
+    copyright = "Copyright(c) 2013-2017 huangyuhui."
     
     jar = new File(project.buildDir, 'libs/' + mavenGroupId + '-' + mavenVersion + '.jar').absolutePath
     outfile = mavenGroupId + '-' + mavenVersion + '.exe'
@@ -166,6 +130,66 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'icon.icns'
     }
+}
+
+task makeExecutable(dependsOn: jar) doLast {
+    ext {
+        jar.classifier = ''
+        makeExecutableinjar = jar.archivePath
+        jar.classifier = ''
+        makeExecutableoutjar = jar.archivePath
+        jar.classifier = ''
+    }
+    def loc = new File(project.buildDir, "libs/" + makeExecutableoutjar.getName().substring(0, makeExecutableoutjar.getName().length()-4)+".exe")
+    def fos = new FileOutputStream(loc)
+    def is = new FileInputStream(new File(project.buildDir, '../HMCLauncher.exe'))
+    int read
+    def bytes = new byte[8192]
+    while((read = is.read(bytes)) != -1)
+    fos.write(bytes, 0, read);
+    is.close()
+    is = new FileInputStream(makeExecutableinjar)
+    while((read = is.read(bytes)) != -1)
+    fos.write(bytes, 0, read);
+    is.close()
+    fos.close()
+    
+}
+
+task makePackGZ(dependsOn: jar) doLast {
+    ext {
+        jar.classifier = ''
+        makeExecutableinjar = jar.archivePath
+        jar.classifier = ''
+        makeExecutableoutjar = jar.archivePath
+        jar.classifier = ''
+    }
+    def loc = new File(project.buildDir, "libs/" + makeExecutableoutjar.getName().substring(0, makeExecutableoutjar.getName().length()-4)+".pack.gz")
+    def os = new GZIPOutputStream(new FileOutputStream(loc))
+    Pack200.newPacker().pack new JarFile(makeExecutableinjar), os
+    os.close()
+    
+    def messageDigest = MessageDigest.getInstance("SHA1")
+    loc.eachByte 1024 * 1024, { byte[] buf, int bytesRead ->
+        messageDigest.update(buf, 0, bytesRead);
+    }
+    def sha1Hex = new BigInteger(1, messageDigest.digest()).toString(16).padLeft(40, '0')
+    def fileEx = new File(project.buildDir, "libs/" + makeExecutableoutjar.getName().substring(0, makeExecutableoutjar.getName().length()-4)+".pack.gz.sha1")
+    if (!fileEx.exists()) fileEx.createNewFile()
+    fileEx.append sha1Hex
+}
+
+task macAppCompressed(type: Zip, dependsOn: createApp) doLast {
+    archiveName "HMCL-$mavenVersion-MacOSApp.zip"
+    include '**'
+    destinationDir file("$buildDir/libs/")
+    from "$buildDir/macApp"
+}
+
+macAppBundle {
+    mainClassName = mainClass
+    icon = "src/main/icon.icns"
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
 }
 
 build.dependsOn makeExecutable

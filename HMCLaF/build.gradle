@@ -15,29 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see {http://www.gnu.org/licenses/}.
  */
-apply plugin: 'me.tatarka.retrolambda'
 
-if (!hasProperty('mainClass')) {
-    ext.mainClass = ''
+plugins {
+    id "me.tatarka.retrolambda" version "3.5.0"
 }
 
 if (System.getenv("BUILD_NUMBER") != null)
     version = System.getenv("BUILD_NUMBER")
 
-buildscript {
-    repositories {
-        mavenCentral();
-        
-        dependencies {
-            classpath 'me.tatarka:gradle-retrolambda:3.1.0'
-        }
-    }
-}
-
 dependencies {
-    compile project(":HMCUtils")
+    compile project(":HMCLCore")
 }
 
 retrolambda {
-    javaVersion = JavaVersion.VERSION_1_6
+    javaVersion = JavaVersion.VERSION_1_7
 }
