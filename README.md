@@ -1,4 +1,4 @@
-# Hello Minecraft! Launcher [![Build Status](https://travis-ci.org/huanghongxun/HMCL.svg?branch=master)](https://travis-ci.org/huanghongxun/HMCL)
+# Hello Minecraft! Launcher [![Build Status](https://travis-ci.org/cyilin/HMCL.svg?branch=master)](https://travis-ci.org/cyilin/HMCL)
 GPL v3, see http://www.gnu.org/licenses/gpl.html
 
 ## Introduction
