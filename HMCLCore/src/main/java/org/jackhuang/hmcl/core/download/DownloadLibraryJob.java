@@ -41,7 +41,7 @@ public class DownloadLibraryJob {
         if (name.startsWith("net.minecraftforge:forge:") && url == null) {
             String[] s = name.split(":");
             if (s.length == 3)
-                url = type.getProvider().getParsedDownloadURL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/" + s[2] + "/forge-" + s[2] + "-universal.jar");
+                url = type.getProvider().getParsedDownloadURL("https://files.minecraftforge.net/maven/net/minecraftforge/forge/" + s[2] + "/forge-" + s[2] + "-universal.jar");
         }
         if (name.startsWith("com.mumfrey:liteloader:") && url == null) {
             String[] s = name.split(":");

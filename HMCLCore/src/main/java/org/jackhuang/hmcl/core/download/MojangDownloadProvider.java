@@ -49,12 +49,12 @@ public class MojangDownloadProvider extends IDownloadProvider {
 
     @Override
     public String getVersionsDownloadURL() {
-        return "http://s3.amazonaws.com/Minecraft.Download/versions/";
+        return "https://s3.amazonaws.com/Minecraft.Download/versions/";
     }
 
     @Override
     public String getIndexesDownloadURL() {
-        return "http://s3.amazonaws.com/Minecraft.Download/indexes/";
+        return "https://s3.amazonaws.com/Minecraft.Download/indexes/";
     }
 
     @Override
@@ -64,7 +64,7 @@ public class MojangDownloadProvider extends IDownloadProvider {
 
     @Override
     public String getAssetsDownloadURL() {
-        return "http://resources.download.minecraft.net/";
+        return "https://resources.download.minecraft.net/";
     }
 
     @Override
@@ -74,16 +74,19 @@ public class MojangDownloadProvider extends IDownloadProvider {
 
     @Override
     public String getParsedDownloadURL(String str) {
-        if (str == null)
+        if (str == null) {
             return null;
-        else if (str.contains("scala-swing") || str.contains("scala-xml") || str.contains("scala-parser-combinators"))
-            return str.replace("http://files.minecraftforge.net/maven", "http://ftb.cursecdn.com/FTB2/maven/");
-        else if (str.contains("typesafe") || str.contains("scala"))
-            if (SupportedLocales.NOW_LOCALE.self == Locale.CHINA)
-                return str.replace("http://files.minecraftforge.net/maven", "http://maven.aliyun.com/nexus/content/groups/public");
-            else
-                return str.replace("http://files.minecraftforge.net/maven", "http://repo1.maven.org/maven2");
-        else
-            return str;
+        } else {
+            str = str.replace("http://files.minecraftforge.net/", "https://files.minecraftforge.net/");
+            if (str.contains("scala-swing") || str.contains("scala-xml") || str.contains("scala-parser-combinators")) {
+                str = str.replace("https://files.minecraftforge.net/maven", "https://repo1.maven.org/maven2");
+                str = str.replace("https://repo1.maven.org/maven2/org/scala-lang/", "https://repo1.maven.org/maven2/org/scala-lang/modules/");
+                return str;
+            } else if (str.contains("typesafe") || str.contains("scala")) {
+                return str.replace("https://files.minecraftforge.net/maven", "https://repo1.maven.org/maven2");
+            } else {
+                return str;
+            }
+        }
     }
 }
