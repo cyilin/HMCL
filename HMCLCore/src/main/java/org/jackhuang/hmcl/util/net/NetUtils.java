@@ -39,7 +39,7 @@ public final class NetUtils {
     }
 
     public static HttpURLConnection createConnection(URL url, Proxy proxy) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) url.openConnection(proxy);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoInput(true);
         con.setUseCaches(false);
         con.setConnectTimeout(15000);
