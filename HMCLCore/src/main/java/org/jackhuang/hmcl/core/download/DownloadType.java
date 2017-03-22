@@ -28,9 +28,7 @@ import org.jackhuang.hmcl.util.task.TaskWindow;
  */
 public enum DownloadType {
 
-    Mojang("download.mojang", new MojangDownloadProvider()),
-    BMCL("download.BMCL", new BMCLAPIDownloadProvider()),
-    Curse("Curse CDN", new CurseDownloadProvider());
+    Mojang("download.mojang", new MojangDownloadProvider());
 
     private final String name;
     private final IDownloadProvider provider;
