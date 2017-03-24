@@ -26,6 +26,7 @@ if (System.getenv("BUILD_NUMBER") != null)
 dependencies {
     compile project(":HMCLAPI")
     compile group: "org.commonjava.googlecode.markdown4j", name: "markdown4j", version: "2.2-cj-1.0"
+    compile group: 'dnsjava', name: 'dnsjava', version: '2.1.8'
 }
 
 retrolambda {

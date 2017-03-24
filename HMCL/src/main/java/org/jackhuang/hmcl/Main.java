@@ -50,6 +50,7 @@ import org.jackhuang.hmcl.util.lang.SupportedLocales;
 import org.jackhuang.hmcl.util.log.Configuration;
 import org.jackhuang.hmcl.util.log.appender.ConsoleAppender;
 import org.jackhuang.hmcl.util.log.layout.DefaultLayout;
+import org.jackhuang.hmcl.util.net.SNIProxy;
 import org.jackhuang.hmcl.util.ui.MyRepaintManager;
 import org.jackhuang.hmcl.util.upgrade.IUpgrader;
 import org.jackhuang.hmcl.laf.BeautyEyeLNFHelper;
@@ -105,7 +106,8 @@ public final class Main {
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Failed to add log appender File because an error occurred while creating or opening hmcl.log", ex);
             }
-            
+            System.setProperty("sun.net.spi.nameservice.provider.1", "dns,dnsjava");
+            new SNIProxy();
             org.jackhuang.hmcl.util.log.logger.Logger logger = new org.jackhuang.hmcl.util.log.logger.Logger("HMCL");
             HMCLog.LOGGER = new ILogger() {
                 @Override
@@ -159,7 +161,7 @@ public final class Main {
             System.setProperty("swing.aatext", "true");
             System.setProperty("sun.java2d.noddraw", "true");
             System.setProperty("sun.java2d.dpiaware", "false");
-            System.setProperty("https.protocols", "SSLv3,TLSv1");
+            System.setProperty("https.protocols", "TLSv1.2");
 
             try {
                 SSLContext c = SSLContext.getInstance("SSL");
@@ -167,7 +169,7 @@ public final class Main {
                 HttpsURLConnection.setDefaultSSLSocketFactory(c.getSocketFactory());
             } catch (GeneralSecurityException ignore) {
             }
-            HttpsURLConnection.setDefaultHostnameVerifier(HNV);
+            //HttpsURLConnection.setDefaultHostnameVerifier(HNV);
 
             Thread.setDefaultUncaughtExceptionHandler(new CrashReporter(true));
 

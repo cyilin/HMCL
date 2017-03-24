@@ -180,6 +180,7 @@ ui.label.failed_set=Failed to set:
 
 download=Download
 download.mojang=Mojang
+download.mojang.sniproxy=Mojang (SNI Proxy)
 download.BMCL=BMCLAPI (bangbang93, http://bmclapi.bangbang93.com/)
 download.rapid_data=RapidData (https://www.rapiddata.org/)
 download.not_200=Failed to download, the response code

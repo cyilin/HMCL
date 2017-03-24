@@ -28,7 +28,8 @@ import org.jackhuang.hmcl.util.task.TaskWindow;
  */
 public enum DownloadType {
 
-    Mojang("download.mojang", new MojangDownloadProvider());
+    Mojang("download.mojang", new MojangDownloadProvider()),
+    SNIProxyDownloadProvider("download.mojang.sniproxy", new SNIProxyDownloadProvider());
 
     private final String name;
     private final IDownloadProvider provider;

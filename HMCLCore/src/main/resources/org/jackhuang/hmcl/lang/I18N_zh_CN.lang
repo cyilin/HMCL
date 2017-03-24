@@ -180,6 +180,7 @@ ui.label.failed_set=设置失败：
 
 download=下载
 download.mojang=官方
+download.mojang.sniproxy=Mojang (SNI Proxy)
 download.BMCL=BMCLAPI (bangbang93, http://bmclapi.bangbang93.com/)
 download.rapid_data=RapidData (锐网云计算, https://www.rapiddata.org/)
 download.not_200=下载失败，回复码
